@@ -1,0 +1,88 @@
+---
+title: "Tarea 2"
+author: "Ruth Ardón Lechuga, 999006711"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+---
+
+***
+***
+
+```{r}
+```
+### FUNCIONES EN R\
+Conjunto de instrucciones que convierten un conjunto de entradas (argumento) en una salida.\ 
+  
+  
+**Estructura**\
+  
+  - Argumentos: Entradas de valores que recibe la función, una función puede no contener argumentos o bien los argumentos
+  pueden tener un valor por defecto.
+- Cuerpo: Conjunto de instrucciones que realizan la transformación de las entras a salidas.
+- Salidas: Resultado que devuelve la función, puede solo realizar un proceso y no retornar un valor.
+```{r}
+generate_table <- function(numero=1, limit=5){
+  i <- 1
+  
+  while(i<=limit){
+    cat(i,"x",numero,"=",i*numero,"\n")
+    i <- i+1
+  }
+  
+}
+generate_table(8)
+```
+
+```{r}
+get_top3 <- function(data) {
+  data <- rev(sort(data))
+  data <- data[1:3]
+  return(data)
+}
+
+notes <- c(90,23,80,40,95,10,40,60,45,20)
+print(get_top3(notes))
+print(notes)
+```
+
+***
+*** 
+
+### FAMILIA APPLY\
+
+Aplica una función a un dataframe, matriz, lista o vector eligiendo si se va a aplicar a la fila o columnas. El resultado depende del tipo de dato que se le haya pasado.\
+    
+  \  
+  
+ - #### lapply\
+Permite realizar operaciones a una lista (u otro tipo de objeto) pero siempre retorna una lista.
+
+```{r}
+how_many_approved<- function(value){
+  return(sum(value>=61))
+}
+
+section_a <- c(90,23,80,40,95,10,40,60,45,20)
+section_b <- c(56,61,52,90,80,70,56,30,90,61)
+data <- list(a <- section_a, b <- section_b)
+lapply(data,how_many_approved)
+```
+  
+  \  
+  
+ - #### sapply\
+Permite realizar operaciones a una lista (u otro tipo de objeto) pero siempre retorna una un vector o matriz.
+
+```{r}
+sapply(data,how_many_approved)
+```
+   
+  \  
+  
+ - #### vapply\
+Permite agregar un tercer paramétro en el cual se específica un filtro de los resultados que se esperan obtener al aplicar la función sobre el objeto. Si todos los valores cumple con el filtro específicado se muestra el resultado, en caso contrario se muestra un error.
+
+```{r}
+vapply(data,how_many_approved,numeric(1))
+vapply(data,how_many_approved,numeric(2))
+```
