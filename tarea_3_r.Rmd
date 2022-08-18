@@ -1,0 +1,41 @@
+---
+title: "Tarea 3"
+author: "Ruth Nohemy Ardón Lechuga, 999006711"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+---
+
+### 0. Leer los datos\
+```{r}
+library(tidyverse)
+dataset_results <- read_csv("./data/primary_results.csv",show_col_types = FALSE)
+print(dataset_results)
+```
+### 1. Filtrar todos los votos del estado de Florida\
+```{r}
+filter(dataset_results, state=="Florida")
+```
+### 2. Utilice operadores lógicos (& and |), según corresponda:\
+
+  - Filtrar votos para los candidatos Hillary Clinton o Donald Trump
+  - Filtrar votos para el partido Demócrata y el condado Shelby
+  - Filtrar votos para el estado de Alabama y que la cantidad de votos sea mayor a 15000
+```{r}
+filter(dataset_results, candidate=="Hillary Clinton" | candidate=="Donald Trump")
+filter(dataset_results, party=="Democrat" & county=="Shelby")
+filter(dataset_results, state=="Alabama" & votes > 15000)
+```
+
+### 3. Utilice la función select y arrange para el siguiente filtrado:\
+
+Filtrar votos para el estado de Texas y el condado Denton, seleccionando únicamente las columnas party, candidate, votes, luego ordene de forma descendente por la columna votes.
+```{r}
+arrange(select(filter(dataset_results, state=="Texas" & county == "Denton"), party, candidate, votes), desc(votes))
+```
+
+### 4. Utilice el verbo mutate y arrange para el siguiente filtrado\
+
+Filtrar por el partido Republicano, que el candidato sea Ted Cruz en el estado de Alaska, luego agregue una columna que se llame vote_count que sea la división de votes por fraction_votes (votes/fraction_votes), finalmente ordene de forma descendente por vote_count.
+```{r}
+arrange(mutate(filter(dataset_results, party == "Republican" & candidate=="Ted Cruz" & state=="Alaska"), vote_count=votes/fraction_votes),desc(vote_count))
+```
