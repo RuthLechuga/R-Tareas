@@ -1,0 +1,47 @@
+---
+title: "Tarea 4"
+author: "Ruth Ardón Lechuga, 999006711"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+---
+```{r}
+library(tidyverse)
+```
+
+### 0. Leer los datos\
+```{r}
+diamonds <- read_csv("./data/diamonds.csv",show_col_types = FALSE)
+print(diamonds)
+```
+### 1. Dispersión\
+```{r}
+ggplot(diamonds, aes(x=carat,y=price, color=clarity))+ geom_point()
+```
+### 2. Histograma\
+```{r}
+ggplot(diamonds, aes(x=price))+ geom_histogram(bins=40)
+ggplot(diamonds, aes(x=price))+ geom_histogram(bins=40)+ scale_x_log10()
+```
+### 3. Boxplots\
+```{r}
+ggplot(diamonds, aes(x=cut, y=price, fill=cut))+ geom_boxplot()+ scale_y_log10()
+```
+### 4. Faceting\
+```{r}
+filtered_price <- diamonds %>% filter(price > 1000) %>% filter(cut %in% c("Good","Ideal","Premium"))
+ggplot(filtered_price, aes(x=cut,y=depth, faceting=clarity, fill=clarity))+geom_bar(stat='identity')
+```
+### 5.1 Grouping and summarizing\
+```{r}
+median_dimension_diamond <- diamonds %>% group_by(cut) %>% summarise(mediaX = mean(x),mediaY = mean(y),mediaZ = mean(z))
+print(median_dimension_diamond)
+```
+### 5.2 Grouping and summarizing\
+```{r}
+cut_premium <- diamonds %>% filter(cut=="Premium") %>% group_by(clarity) %>% summarise(minPrice=min(price), maxPrice=max(price))
+print(cut_premium)
+```
+### 5.3 Grouping and summarizing\
+```{r}
+ggplot(cut_premium, aes(x=clarity,y=maxPrice, fill=clarity))+geom_bar(stat='identity')
+```
