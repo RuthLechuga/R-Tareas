@@ -1,0 +1,56 @@
+---
+title: "Tarea 5"
+author: "Ruth Ardón Lechuga, 999006711"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+---
+```{r}
+library(tidyverse)
+```
+
+### 0. Leer los datos\
+```{r}
+questions <- read_csv("./data/questions.csv",show_col_types = FALSE)
+answers <- read_csv("./data/answers.csv",show_col_types = FALSE)
+tags <- read_csv("./data/tags.csv",show_col_types = FALSE)
+question_tags <- read_csv("./data/question_tags.csv",show_col_types = FALSE)
+print(questions)
+print(answers)
+print(tags)
+print(question_tags)
+```
+
+### 1. Left-joining questions and tags\
+```{r}
+questions_with_tags <- questions %>% 
+  left_join(question_tags,by=c("id"="question_id")) %>% 
+  left_join(tags,by=c("tag_id"="id")) %>%
+  replace_na(list(tag_name = "only-r"))
+
+print(questions_with_tags)
+```
+### 2. Comparing scores across tags\
+```{r}
+mean_score <- questions_with_tags %>% group_by(tag_name) %>% summarise(mean_score=mean(score))
+mean_score <- mean_score[order(mean_score$mean_score, decreasing = TRUE),]
+print(mean_score)
+```
+### 3. Finding gaps between questions and answers\
+```{r}
+answers_questions <- questions %>% left_join(answers,by=c("id"="question_id"), suffix=c("_question","_answer"))
+answers_questions <- mutate(answers_questions,gap=creation_date_answer-creation_date_question)
+print(answers_questions)
+```
+### 4. Joining question and answer counts\
+```{r}
+answer_counts <- answers %>% count(question_id, sort = TRUE)
+question_answer_counts <- questions %>% left_join(answer_counts, by=c("id"="question_id")) %>% replace_na(list(n = 0))
+question_answer_counts <- question_answer_counts[order(question_answer_counts$n, decreasing = TRUE),]
+print(question_answer_counts)
+```
+### 5. Joining questions, answers, and tags\
+```{r}
+topics <- question_tags %>% inner_join(question_answer_counts,by=c("question_id"="id")) %>% inner_join(tags,by=c("tag_id"="id"))
+topics <- topics[order(topics$n, decreasing = TRUE),]
+print(topics)
+```
